@@ -3,6 +3,7 @@ module test_operableBitset_collection
     use :: test_operableBitset_unitTests_initialize
     use :: test_operableBitset_unitTests_properties
     use :: test_operableBitset_unitTests_bitOperations
+    use :: test_operableBitset_unitTests_getValue
     implicit none
     private
     public :: collect_operableBitset
@@ -48,6 +49,14 @@ contains
                                     flip_pos_flips_one_bit) &
                      , new_unittest("flip range", &
                                     flip_range_flips_bits_at_positions_from_start_to_end) &
+                     , new_unittest("value 1", &
+                                    value_returns_1_when_the_bit_is_1) &
+                     , new_unittest("value 0", &
+                                    value_returns_0_when_the_bit_is_0) &
+                     , new_unittest("to_string", &
+                                    to_string_returns_bitset_in_string) &
+                     , new_unittest("extract", &
+                                    extract_returns_specified_range_of_bitset) &
                      ]
     end subroutine collect_operableBitset
 end module test_operableBitset_collection
