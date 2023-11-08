@@ -4,6 +4,7 @@ module test_operableBitset_collection
     use :: test_operableBitset_unitTests_properties
     use :: test_operableBitset_unitTests_bitOperations
     use :: test_operableBitset_unitTests_getValue
+    use :: test_operableBitset_unitTests_udio
     implicit none
     private
     public :: collect_operableBitset
@@ -57,6 +58,8 @@ contains
                                     to_string_returns_bitset_in_string) &
                      , new_unittest("extract", &
                                     extract_returns_specified_range_of_bitset) &
+                     , new_unittest("user-defined derived type output", &
+                                    udo_write_bitset_in_binary_representation_to_a_unit) &
                      ]
     end subroutine collect_operableBitset
 end module test_operableBitset_collection
