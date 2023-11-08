@@ -91,6 +91,11 @@ module orbs_type_operableBitset
         !* represents the bitset as a binary literal
         procedure, public, pass :: extract
         !* creates a new bitset from a range in the bitset
+
+        ! UDIO
+        procedure, public, pass :: output
+        !* writes a binary representation of the bitset to a unit
+        generic :: write (formatted) => output
     end type operable_bitset
 
     !>Constructor for operable_bitset
@@ -313,4 +318,75 @@ contains
 
         call bitset_extract(new_bitset%bitset, this%bitset, start_pos, end_pos)
     end function extract
+
+    !>Writes a bitset representation of the bitset to a unit.
+    subroutine output(bitset, unit, io_type, v_list, io_status, io_message)
+        use :: stdlib_ascii, only:to_upper
+
+        class(operable_bitset), intent(in) :: bitset
+            !! passed-object dummy argument
+        integer(int32), intent(in) :: unit
+            !! unit number
+        character(*), intent(in) :: io_type
+            !! type name specified by the format descriptor for UDIO
+        integer(int32), intent(in) :: v_list(:)
+            !! variable list specified by the format descriptor for UDIO
+        integer(int32), intent(out) :: io_status
+            !! IO status returned from write statement
+        character(*), intent(inout) :: io_message
+            !! IO message returned from write statement
+
+        error_case: block
+            !- fmt /= '(DT"bitset")'
+            if (all([io_type /= "LISTDIRECTED", &
+                     io_type /= "DT", &
+                     to_upper(io_type) /= "DTBITSET"])) then
+                io_status = format_descriptor_mismatch
+                io_message = get_error_message(io_status)
+                return
+            end if
+        end block error_case
+
+        !--- normal case
+        normal_case: block
+            character(:), allocatable :: str_bitset, fmt
+            character(11) :: str_digits
+            integer(int32) :: num_bits
+
+            num_bits = bitset%bits()
+            if (num_bits >= 1) then
+                str_bitset = bitset%to_string()
+            else
+                str_bitset = ""
+            end if
+
+            !--- unformatted write
+            if (any([io_type == "LISTDIRETED", & ! fmt = *
+                     to_upper(io_type) == "DT", & ! fmt = '(DT)'
+                     size(v_list) < 1])) then ! fmt = '(DT"bitset")'
+
+                write (unit, '(A)', iostat=io_status, iomsg=io_message) str_bitset
+                return
+            end if
+
+            !--- formatted write
+            ! size(v_list) < 1 is captured at the if stmt above.
+            write (str_digits, '(I0)') v_list(1)
+            fmt = '(A'//trim(str_digits)//')'
+
+            if (v_list(1) > num_bits) then
+                ! padding the upper bits with " "
+                ! write(*, DT"bitset"(10)) 11111111 writes   11111111
+                !                                          ^--------^
+                str_bitset = repeat(" ", v_list(1) - num_bits)//str_bitset
+            else if (v_list(1) < num_bits) then
+                ! truncate upper bits
+                ! write(*, DT"bitset"(6)) 11000000 writes (11)000000
+                !                                             ^----^
+                str_bitset = str_bitset(num_bits - v_list(1) + 1:)
+            end if
+
+            write (unit, fmt, iostat=io_status, iomsg=io_message) str_bitset
+        end block normal_case
+    end subroutine output
 end module orbs_type_operableBitset
