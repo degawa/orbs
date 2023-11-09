@@ -10,4 +10,11 @@ module orbs
     public :: orbs_one
     public :: orbs_zero
     public :: orbs_get_error_message
+
+    ! opereators
+    public :: operator( .and. )
+    public :: operator(.andnot.)
+    public :: operator( .or. )
+    public :: operator(.xor.)
+    public :: operator(.not.)
 end module orbs

@@ -29,6 +29,11 @@ module orbs_type_operableBitset
         format_descriptor_mismatch
     implicit none
     private
+    public :: operator( .and. )
+    public :: operator(.andnot.)
+    public :: operator( .or. )
+    public :: operator(.xor.)
+    public :: operator(.not.)
     public :: success, &
               alloc_fault, &
               array_size_invalid_error, &
@@ -102,6 +107,31 @@ module orbs_type_operableBitset
     interface operable_bitset
         procedure :: construct_operable_bitset_bits
         procedure :: construct_operable_bitset_string
+    end interface
+
+    !>Bitwise logical AND of the bits of two bitsets.
+    interface operator( .and. )
+        procedure :: and_bitset_bitset
+    end interface
+
+    !>Bitwise logical AND of one bitset with the negation of another.
+    interface operator(.andnot.)
+        procedure :: and_not_bitset_bitset
+    end interface
+
+    !>Bitwise logical OR of the bits of two bitsets.
+    interface operator( .or. )
+        procedure :: or_bitset_bitset
+    end interface
+
+    !>Bitwise logical exclusive OR of the bits of two bitsets.
+    interface operator(.xor.)
+        procedure :: xor_bitset_bitset
+    end interface
+
+    !>Bitwise logical complement of the bits.
+    interface operator(.not.)
+        procedure :: not_bitset
     end interface
 
 contains
@@ -389,4 +419,84 @@ contains
             write (unit, fmt, iostat=io_status, iomsg=io_message) str_bitset
         end block normal_case
     end subroutine output
+
+    !>Returns new `operable_bitset` insatance having the bits
+    !>set to the bitwise logical AND of the bits in `lhs` and `rhs`.
+    !>
+    !>This procedure intented to be overloaded as the `.and.` operator.
+    function and_bitset_bitset(lhs, rhs) result(new_bitset)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of the AND operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of the AND operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset having bits set to the bitwise logical AND
+
+        call clone(from=lhs, to=new_bitset)
+        call and(new_bitset%bitset, rhs%bitset)
+    end function and_bitset_bitset
+
+    !>Returns new `operable_bitset` insatance having the bits
+    !>set to the bitwise logical AND of the bits in `lhs`
+    !>with the bitwise negation of the corresponding bits in `rhs`.
+    !>
+    !>This procedure intented to be overloaded as the `.andnot.` operator.
+    elemental function and_not_bitset_bitset(lhs, rhs) result(new_bitset)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of the ANDNOT operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the left side of the ANDNOT operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset having bits set to the bitwise logical AND
+            !! of `lhs` and the negation of `rhs`
+
+        call clone(from=lhs, to=new_bitset)
+        call and_not(new_bitset%bitset, rhs%bitset)
+    end function and_not_bitset_bitset
+
+    !>Returns new `operable_bitset` insatance having the bits
+    !>set to the bitwise logical OR of the bits in `lhs` and `rhs`.
+    !>
+    !>This procedure intented to be overloaded as the `.or.` operator.
+    function or_bitset_bitset(lhs, rhs) result(new_bitset)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of the OR operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of the OR operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset having bits set to the bitwise logical OR
+
+        call clone(from=lhs, to=new_bitset)
+        call or(new_bitset%bitset, rhs%bitset)
+    end function or_bitset_bitset
+
+    !>Returns new `operable_bitset` insatance having the bits
+    !>set to the bitwise logical exclusive OR of the bits in `lhs` and `rhs`.
+    !>
+    !>This procedure intented to be overloaded as the `.xor.` operator.
+    elemental function xor_bitset_bitset(lhs, rhs) result(new_bitset)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of the XOR operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of the XOR operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset having bits set to the bitwise logical XOR
+
+        call clone(from=lhs, to=new_bitset)
+        call xor(new_bitset%bitset, rhs%bitset)
+    end function xor_bitset_bitset
+
+    !>Returns new `operable_bitset` instance having the bits
+    !>set to the bitwise logical complement of the bits in the bitset.
+    !>
+    !>This procedure intented to be overloaded as the `.not.` operator.
+    elemental function not_bitset(this) result(new_bitset)
+        type(operable_bitset), intent(in) :: this
+            !! A bitset at the right side of the NOT operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset having bits set tothe bitwise logical complement
+
+        call clone(from=this, to=new_bitset)
+        call new_bitset%bitset%not()
+    end function not_bitset
 end module orbs_type_operableBitset
