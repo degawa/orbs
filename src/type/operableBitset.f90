@@ -462,7 +462,7 @@ contains
         end block normal_case
     end subroutine output
 
-    !>Returns new `operable_bitset` insatance having the bits
+    !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical AND of the bits in `lhs` and `rhs`.
     !>
     !>This procedure intented to be overloaded as the `.and.` operator.
@@ -478,7 +478,7 @@ contains
         call and(new_bitset%bitset, rhs%bitset)
     end function and_bitset_bitset
 
-    !>Returns new `operable_bitset` insatance having the bits
+    !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical AND of the bits in `lhs`
     !>with the bitwise negation of the corresponding bits in `rhs`.
     !>
@@ -496,7 +496,7 @@ contains
         call and_not(new_bitset%bitset, rhs%bitset)
     end function and_not_bitset_bitset
 
-    !>Returns new `operable_bitset` insatance having the bits
+    !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical OR of the bits in `lhs` and `rhs`.
     !>
     !>This procedure intented to be overloaded as the `.or.` operator.
@@ -512,7 +512,7 @@ contains
         call or(new_bitset%bitset, rhs%bitset)
     end function or_bitset_bitset
 
-    !>Returns new `operable_bitset` insatance having the bits
+    !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical exclusive OR of the bits in `lhs` and `rhs`.
     !>
     !>This procedure intented to be overloaded as the `.xor.` operator.
