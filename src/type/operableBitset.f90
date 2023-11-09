@@ -43,6 +43,7 @@ module orbs_type_operableBitset
     public :: operator(+)
     public :: operator(-)
     public :: operator(.shift.)
+    public :: sort
     public :: success, &
               alloc_fault, &
               array_size_invalid_error, &
@@ -192,6 +193,11 @@ module orbs_type_operableBitset
     !>Bit shift on bitset.
     interface operator(.shift.)
         procedure :: shift_bitset
+    end interface
+
+    !>Sorting a bitset array.
+    interface sort
+        procedure :: sort_bitset
     end interface
 
 contains
@@ -698,4 +704,21 @@ contains
 
         new_bitset = operable_bitset(shift(this%to_string(), amount))
     end function shift_bitset
+
+    !>Sorts an input array based on the compoment `bitset` in increasing order,
+    !>and sorts the array in decreasing order if `reserve` is `.true.`.
+    subroutine sort_bitset(array, reverse)
+        use :: stdlib_sorting, only:sort
+
+        type(operable_bitset), intent(inout) :: array(:)
+            !! Input array
+        logical, intent(in), optional :: reverse
+            !! Flag to sort in decreasing order
+
+        type(bitset_large), allocatable :: bitset(:)
+
+        bitset = array(:)%bitset
+        call sort(bitset, reverse)
+        array(:)%bitset = bitset(:)
+    end subroutine sort_bitset
 end module orbs_type_operableBitset

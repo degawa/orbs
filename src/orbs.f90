@@ -10,6 +10,7 @@ module orbs
     public :: orbs_one
     public :: orbs_zero
     public :: orbs_get_error_message
+    public :: sort
 
     ! opereators
     public :: operator( .and. )
