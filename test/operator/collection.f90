@@ -2,6 +2,7 @@ module test_operator_collection
     use :: testdrive, only:new_unittest, unittest_type
     use :: test_operator_unitTests_logical
     use :: test_operator_unitTests_comparison
+    use :: test_operator_unitTests_arithmetic
     implicit none
     private
     public :: collect_operator
@@ -47,6 +48,10 @@ contains
                                     le_op_returns_true_if_lhs_is_less_than_or_equal_to_rhs) &
                      , new_unittest("bitset comparator <= false", &
                                     le_op_returns_false_if_lhs_is_greater_than_rhs) &
+                     , new_unittest("bitset arithmetic operator +", &
+                                    add_op_returns_bitset_having_value_of_result_of_addition) &
+                     , new_unittest("bitset arithmetic operator -", &
+                                    sub_op_returns_bitset_having_value_of_result_of_subtraction) &
                      ]
     end subroutine collect_operator
 end module test_operator_collection
