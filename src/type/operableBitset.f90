@@ -34,6 +34,12 @@ module orbs_type_operableBitset
     public :: operator( .or. )
     public :: operator(.xor.)
     public :: operator(.not.)
+    public :: operator(==)
+    public :: operator(/=)
+    public :: operator(>)
+    public :: operator(>=)
+    public :: operator(<)
+    public :: operator(<=)
     public :: success, &
               alloc_fault, &
               array_size_invalid_error, &
@@ -132,6 +138,42 @@ module orbs_type_operableBitset
     !>Bitwise logical complement of the bits.
     interface operator(.not.)
         procedure :: not_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs and rhs have the same value.
+    interface operator(==)
+        procedure :: is_equal_bitset_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs and rhs differ from each other.
+    interface operator(/=)
+        procedure :: is_not_equal_bitset_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs is greater than rhs.
+    interface operator(>)
+        procedure :: is_greater_than_bitset_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs is greater than or equal to rhs.
+    interface operator(>=)
+        procedure :: is_greater_than_or_equal_to_bitset_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs is less than rhs.
+    interface operator(<)
+        procedure :: is_less_than_bitset_bitset
+    end interface
+
+    !>Comparison of two bitsets to determine
+    !>whether lhs is less than or equal to rhs.
+    interface operator(<=)
+        procedure :: is_less_than_or_equal_to_bitset_bitset
     end interface
 
 contains
@@ -499,4 +541,82 @@ contains
         call clone(from=this, to=new_bitset)
         call new_bitset%bitset%not()
     end function not_bitset
+
+    !>Returns `.true.` if the all bits in `lhs` and `rhs` have same value,
+    !>and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `==` operator
+    pure elemental logical function is_equal_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `==` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `==` operator
+
+        is_equal_bitset_bitset = lhs%bitset == rhs%bitset
+    end function is_equal_bitset_bitset
+
+    !>Returns `.true.` if the any bits in `lhs` and `rhs` differ in value,
+    !>and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `/=` operator
+    pure elemental logical function is_not_equal_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `/=` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `/=` operator
+
+        is_not_equal_bitset_bitset = lhs%bitset /= rhs%bitset
+    end function is_not_equal_bitset_bitset
+
+    !>Returns `.true.` if bitset in `lhs` is greater than that in `rhs`,
+    !>and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `>` operator
+    pure logical function is_greater_than_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `>` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `>` operator
+
+        is_greater_than_bitset_bitset = lhs%bitset > rhs%bitset
+    end function is_greater_than_bitset_bitset
+
+    !>Returns `.true.` if bitset in `lhs` is greater than or equal to
+    !>that in `rhs`, and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `>=` operator
+    pure logical function is_greater_than_or_equal_to_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `>=` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `>=` operator
+
+        is_greater_than_or_equal_to_bitset_bitset = lhs%bitset >= rhs%bitset
+    end function is_greater_than_or_equal_to_bitset_bitset
+
+    !>Returns `.true.` if bitset in `lhs` is less than that in `rhs`,
+    !>and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `<` operator
+    pure logical function is_less_than_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `<` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `<` operator
+
+        is_less_than_bitset_bitset = lhs%bitset < rhs%bitset
+    end function is_less_than_bitset_bitset
+
+    !>Returns `.true.` if bitset in `lhs` is less than or equal to
+    !>that in `rhs`, and returns `.false.` otherwise.
+    !>
+    !>This procedure intented to be overloaded as the `<=` operator
+    pure logical function is_less_than_or_equal_to_bitset_bitset(lhs, rhs)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `<=` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `<=` operator
+
+        is_less_than_or_equal_to_bitset_bitset = lhs%bitset <= rhs%bitset
+    end function is_less_than_or_equal_to_bitset_bitset
 end module orbs_type_operableBitset
