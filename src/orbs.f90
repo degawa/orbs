@@ -17,4 +17,10 @@ module orbs
     public :: operator( .or. )
     public :: operator(.xor.)
     public :: operator(.not.)
+    public :: operator(==)
+    public :: operator(/=)
+    public :: operator(>)
+    public :: operator(>=)
+    public :: operator(<)
+    public :: operator(<=)
 end module orbs
