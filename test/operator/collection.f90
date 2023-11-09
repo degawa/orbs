@@ -3,6 +3,7 @@ module test_operator_collection
     use :: test_operator_unitTests_logical
     use :: test_operator_unitTests_comparison
     use :: test_operator_unitTests_arithmetic
+    use :: test_operator_unitTests_bit
     implicit none
     private
     public :: collect_operator
@@ -52,6 +53,8 @@ contains
                                     add_op_returns_bitset_having_value_of_result_of_addition) &
                      , new_unittest("bitset arithmetic operator -", &
                                     sub_op_returns_bitset_having_value_of_result_of_subtraction) &
+                     , new_unittest("bitset shift operator", &
+                                    shift_op_returns_bitset_having_value_of_result_of_shifting) &
                      ]
     end subroutine collect_operator
 end module test_operator_collection
