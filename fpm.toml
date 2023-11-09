@@ -30,3 +30,4 @@ bstrith = {git = "https://github.com/degawa/bstrith.git"}
 test-drive = { git="https://github.com/fortran-lang/test-drive" }
 testdrive_util = { git="https://github.com/degawa/testdrive_util" }
 fassert = { git = "https://github.com/degawa/fassert"}
+enclose = { git = "https://github.com/degawa/enclose"}
