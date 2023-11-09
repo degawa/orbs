@@ -25,4 +25,5 @@ module orbs
     public :: operator(<=)
     public :: operator(+)
     public :: operator(-)
+    public :: operator(.shift.)
 end module orbs

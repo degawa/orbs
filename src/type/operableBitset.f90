@@ -42,6 +42,7 @@ module orbs_type_operableBitset
     public :: operator(<=)
     public :: operator(+)
     public :: operator(-)
+    public :: operator(.shift.)
     public :: success, &
               alloc_fault, &
               array_size_invalid_error, &
@@ -186,6 +187,11 @@ module orbs_type_operableBitset
     !>Subtraction of two bitsets.
     interface operator(-)
         procedure :: sub_bitset_bitset
+    end interface
+
+    !>Bit shift on bitset.
+    interface operator(.shift.)
+        procedure :: shift_bitset
     end interface
 
 contains
@@ -669,4 +675,27 @@ contains
 
         new_bitset = operable_bitset(sub(lhs%to_string(), rhs%to_string()))
     end function sub_bitset_bitset
+
+    !>Performs bit shift of two bitsets and returns
+    !>new `operable_bitset` instance with the value of the result
+    !>of the shift.
+    !>
+    !>`amount > 0` corresponds to a left shift,
+    !>`amount < 0` corresponds to a right shift,
+    !>`amount ==0` corresponds to no shift.
+    !>If absolute value of `amount` is larger than the length of `a`,
+    !>the result is undefined.
+    !>
+    !>This procedure intented to be overloaded as the `.shift.` operator.
+    function shift_bitset(this, amount) result(new_bitset)
+        use :: bstrith, only:shift
+        type(operable_bitset), intent(in) :: this
+            !! A bitset at the left side of `.shift.` operator
+        integer(int32), intent(in) :: amount
+            !! shift amount
+        type(operable_bitset) :: new_bitset
+           !! new bitset having the result of the bit shift
+
+        new_bitset = operable_bitset(shift(this%to_string(), amount))
+    end function shift_bitset
 end module orbs_type_operableBitset
