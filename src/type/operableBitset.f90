@@ -40,6 +40,8 @@ module orbs_type_operableBitset
     public :: operator(>=)
     public :: operator(<)
     public :: operator(<=)
+    public :: operator(+)
+    public :: operator(-)
     public :: success, &
               alloc_fault, &
               array_size_invalid_error, &
@@ -619,4 +621,42 @@ contains
 
         is_less_than_or_equal_to_bitset_bitset = lhs%bitset <= rhs%bitset
     end function is_less_than_or_equal_to_bitset_bitset
+
+    !>Performs addition of two bitsets and returns
+    !>new `operable_bitset` instance with the value of the result
+    !>of the addition.
+    !>Addition follows the rules of integer arithmetic,
+    !>including overflow.
+    !>
+    !>This procedure intented to be overloaded as the `+` operator.
+    function add_bitset_bitset(lhs, rhs) result(new_bitset)
+        use :: bstrith, only:add
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `+` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `+` operator
+        type(operable_bitset) :: new_bitset
+           !! new bitset having the result of the addition
+
+        new_bitset = operable_bitset(add(lhs%to_string(), rhs%to_string()))
+    end function add_bitset_bitset
+
+    !>Performs subtraction of two bitsets and returns
+    !>new `operable_bitset` instance with the value of the result
+    !>of the subtraction.
+    !>Subtraction follows the rules of integer arithmetic,
+    !>including underflow.
+    !>
+    !>This procedure intented to be overloaded as the `-` operator.
+    function sub_bitset_bitset(lhs, rhs) result(new_bitset)
+        use :: bstrith, only:sub
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of `-` operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the right side of `-` operator
+        type(operable_bitset) :: new_bitset
+           !! new bitset having the result of the subtraction
+
+        new_bitset = operable_bitset(sub(lhs%to_string(), rhs%to_string()))
+    end function sub_bitset_bitset
 end module orbs_type_operableBitset

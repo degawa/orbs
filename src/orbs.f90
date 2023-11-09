@@ -23,4 +23,6 @@ module orbs
     public :: operator(>=)
     public :: operator(<)
     public :: operator(<=)
+    public :: operator(+)
+    public :: operator(-)
 end module orbs
