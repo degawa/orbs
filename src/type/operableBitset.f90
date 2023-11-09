@@ -178,6 +178,16 @@ module orbs_type_operableBitset
         procedure :: is_less_than_or_equal_to_bitset_bitset
     end interface
 
+    !>Addition of two bitsets.
+    interface operator(+)
+        procedure :: add_bitset_bitset
+    end interface
+
+    !>Subtraction of two bitsets.
+    interface operator(-)
+        procedure :: sub_bitset_bitset
+    end interface
+
 contains
     !>Returns `operable_bitset` instance initialized by the numbere of bits.
     function construct_operable_bitset_bits(num_bits, status) result(new_bitset)
