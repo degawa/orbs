@@ -32,7 +32,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(adjustl(str_bitset)), "1111", &
-                          "unformatted UDO should write bitset in binary representation", &
+                          "unformatted UDO `write (unit, *) bitset` with value of '1111' "// &
+                          "should write '1111' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
@@ -48,7 +49,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(adjustl(str_bitset)), "11110000", &
-                          "formatted UDO w/o typename should write bitset in binary representation", &
+                          "formatted UDO `write (unit, '(DT)') bitset` with value of '11110000' "// &
+                          "should write '11110000' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
@@ -64,7 +66,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(adjustl(str_bitset)), "000011110000", &
-                          "formatted UDO w/ format descriptor should write bitset in binary representation", &
+                          "formatted UDO `write (unit, '(DT""bitset"")') bitset` with value of '000011110000' "// &
+                          "should write '000011110000' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
@@ -80,7 +83,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(str_bitset), "1111000011110000", &
-                          "formatted UDO w/ format descriptor & bits should write bitset in binary representation", &
+                          "formatted UDO `write (unit, '(DT""bitset""(16))') bitset` with value of '1111000011110000' "// &
+                          "should write '1111000011110000' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
@@ -96,7 +100,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(str_bitset), "    1111000011110000", &
-                          "formatted UDO w/ format descriptor & padding should write bitset in binary representation", &
+                          "formatted UDO `write (unit, '(DT""bitset""(20))') bitset` with value of '1111000011110000' "// &
+                          "should write '    1111000011110000' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
@@ -112,7 +117,8 @@ contains
         close (write_unit)
 
         call expect_equal(trim(str_bitset), "110000", &
-                          "formatted UDO w/ format descriptor & truncation should write bitset in binary representation", &
+                          "formatted UDO `write (unit, '(DT""bitset""(6))') bitset` with value of '1111000011110000' "// &
+                          "should write '110000' to the unit", &
                           stat, output_message=msg)
         call check(error, stat, msg)
         if (occurred(error)) return
