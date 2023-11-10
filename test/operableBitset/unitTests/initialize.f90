@@ -7,6 +7,7 @@ module test_operableBitset_unitTests_initialize
     implicit none
     private
     public :: constructor_returns_operable_bitset_type
+    public :: init_initialize_component_bitset
 
 contains
     subroutine constructor_returns_operable_bitset_type(error)

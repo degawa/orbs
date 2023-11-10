@@ -18,6 +18,8 @@ contains
         test_suite = [ &
                      new_unittest("constructor", &
                                   constructor_returns_operable_bitset_type) &
+                     , new_unittest("initialize", &
+                                    init_initialize_component_bitset) &
                      , new_unittest("bits", &
                                     bits_returns_number_of_bits_of_bitset) &
                      , new_unittest("test - true", &
