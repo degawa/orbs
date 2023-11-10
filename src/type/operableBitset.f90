@@ -405,6 +405,7 @@ contains
     !>in the bitset.
     function extract(this, start_pos, end_pos) result(new_bitset)
         class(operable_bitset), intent(in) :: this
+            !! passed-object dummy argument
         integer(int32), intent(in) :: start_pos
             !! starting position of the range
         integer(int32), intent(in) :: end_pos
