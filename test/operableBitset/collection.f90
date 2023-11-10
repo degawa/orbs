@@ -60,6 +60,10 @@ contains
                                     extract_returns_specified_range_of_bitset) &
                      , new_unittest("user-defined derived type output", &
                                     udo_write_bitset_in_binary_representation_to_a_unit) &
+#if defined(NAGFOR)
+                     , new_unittest("user-defined derived type input", &
+                                    udi_read_bitset_in_binary_representation_from_a_unit) &
+#endif
                      ]
     end subroutine collect_operableBitset
 end module test_operableBitset_collection

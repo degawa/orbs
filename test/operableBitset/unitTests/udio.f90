@@ -8,6 +8,9 @@ module test_operableBitset_unitTests_udio
     implicit none
     private
     public :: udo_write_bitset_in_binary_representation_to_a_unit
+#if defined(NAGFOR)
+    public :: udi_read_bitset_in_binary_representation_from_a_unit
+#endif
 
 contains
     subroutine udo_write_bitset_in_binary_representation_to_a_unit(error)
@@ -123,4 +126,107 @@ contains
         call check(error, stat, msg)
         if (occurred(error)) return
     end subroutine udo_write_bitset_in_binary_representation_to_a_unit
+
+#if defined(NAGFOR)
+    subroutine udi_read_bitset_in_binary_representation_from_a_unit(error)
+        implicit none
+        type(error_type), allocatable, intent(out) :: error
+            !! error handler
+
+        type(operable_bitset) :: bitset
+        integer(int32) :: read_unit
+        logical :: stat
+        character(:), allocatable :: msg
+
+        !------------------------------------------------------------------!
+        ! unformatted io
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "10101010"
+        rewind (read_unit)
+        read (read_unit, *) bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "10101010", &
+                          "unformatted UDI `read (unit, *) bitset` from the unit containing '10101010' "// &
+                          "should read '10101010' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+
+        !------------------------------------------------------------------!
+        ! formatted io with incomplete format descriptor
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "1101001110011111"
+        rewind (read_unit)
+        read (read_unit, '(DT)') bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "1101001110011111", &
+                          "formatted UDI `read (unit, '(DT)') bitset` from the unit containing "// &
+                          "'1101001110011111' should read '1101001110011111' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+
+        !------------------------------------------------------------------!
+        ! formatted io with format descriptor
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "00001101001110011111"
+        rewind (read_unit)
+        read (read_unit, '(DT"bitset")') bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "00001101001110011111", &
+                          "formatted UDI `read (unit, '(DT""bitset"")') bitset` from the unit containing "// &
+                          "'00001101001110011111' should read '1101001110011111' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+
+        !------------------------------------------------------------------!
+        ! formatted io with format descriptor & vlist
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "11110000"
+        rewind (read_unit)
+        read (read_unit, '(DT"bitset"(8))') bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "11110000", &
+                          "formatted UDI `read (unit, '(DT""bitset""(8))') bitset` from the unit containing "// &
+                          "'11110000' should read '11110000' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+
+        !------------------------------------------------------------------!
+        ! formatted io with format descriptor & vlist
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "11110000"
+        rewind (read_unit)
+        read (read_unit, '(DT"bitset"(10))') bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "0011110000", &
+                          "formatted UDI `read (unit, '(DT""bitset""(10))') bitset` from the unit containing "// &
+                          "'0011110000' should read '0011110000' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+
+        !------------------------------------------------------------------!
+        ! formatted io with format descriptor & vlist
+        open (newunit=read_unit, status="scratch")
+        write (read_unit, '(A)') "11110000"
+        rewind (read_unit)
+        read (read_unit, '(DT"bitset"(6))') bitset
+        close (read_unit)
+
+        call expect_equal(bitset%to_string(), "110000", &
+                          "formatted UDI `read (unit, '(DT""bitset""(6))') bitset` from the unit containing "// &
+                          "'110000' should read '110000' into bitset", &
+                          stat, output_message=msg)
+        call check(error, stat, msg)
+        if (occurred(error)) return
+    end subroutine udi_read_bitset_in_binary_representation_from_a_unit
+#endif
 end module test_operableBitset_unitTests_udio
