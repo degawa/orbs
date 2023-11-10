@@ -29,6 +29,7 @@ module orbs_type_operableBitset
         format_descriptor_mismatch
     implicit none
     private
+    public :: assignment(=)
     public :: operator( .and. )
     public :: operator(.andnot.)
     public :: operator( .or. )
@@ -122,6 +123,11 @@ module orbs_type_operableBitset
     interface operable_bitset
         procedure :: construct_operable_bitset_bits
         procedure :: construct_operable_bitset_string
+    end interface
+
+    !>Assignment of a string as the bitset.
+    interface assignment(=)
+        procedure :: assign_string
     end interface
 
     !>Bitwise logical AND of the bits of two bitsets.
@@ -577,6 +583,19 @@ contains
         end subroutine getline
     end subroutine input
 #endif
+
+    !>Assigns a string as a bitset.
+    !>
+    !>This procedure intented to be overloaded as the `=` operator.
+    subroutine assign_string(lhs, rhs)
+        type(operable_bitset), intent(out) :: lhs
+            !! passed-object dummy argument,
+            !! left hand side of =
+        character(*), intent(in) :: rhs
+            !! a string as right hand side of =
+
+        call lhs%init(rhs)
+    end subroutine assign_string
 
     !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical AND of the bits in `lhs` and `rhs`.
