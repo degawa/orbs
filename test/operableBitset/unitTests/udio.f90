@@ -20,8 +20,6 @@ contains
         character(256) :: str_bitset
         logical :: stat
         character(:), allocatable :: msg
-        integer(int32) :: iostat
-        character(128) :: iomsg
 
         !------------------------------------------------------------------!
         ! unformatted io
