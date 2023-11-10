@@ -16,4 +16,7 @@ program ex_bitset
 
     call bitset%init("2", status)
     print *, orbs_get_error_message(status) !  A character string had an invalid character.
+
+    bitset = "00001111"
+    print *, bitset
 end program ex_bitset
