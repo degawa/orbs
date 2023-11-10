@@ -4,6 +4,7 @@ module test_operator_collection
     use :: test_operator_unitTests_comparison
     use :: test_operator_unitTests_arithmetic
     use :: test_operator_unitTests_bit
+    use :: test_operator_unitTests_assignment
     implicit none
     private
     public :: collect_operator
@@ -55,6 +56,8 @@ contains
                                     sub_op_returns_bitset_having_value_of_result_of_subtraction) &
                      , new_unittest("bitset shift operator", &
                                     shift_op_returns_bitset_having_value_of_result_of_shifting) &
+                     , new_unittest("bitset assignment = string", &
+                                    assign_string_assigns_rhs_string_as_bitset) &
                      ]
     end subroutine collect_operator
 end module test_operator_collection
