@@ -111,6 +111,11 @@ module orbs_type_operableBitset
         procedure, public, pass :: output
         !* writes a binary representation of the bitset to a unit
         generic :: write (formatted) => output
+#if defined(NAGFOR)
+        procedure, public, pass :: input
+        !* reads a bitset literal from a unit
+        generic :: read (formatted) => input
+#endif
     end type operable_bitset
 
     !>Constructor for operable_bitset
@@ -486,6 +491,92 @@ contains
             write (unit, fmt, iostat=io_status, iomsg=io_message) str_bitset
         end block normal_case
     end subroutine output
+
+#if defined(NAGFOR)
+    !>Reads a bitset from its binary representation from a unit.
+    subroutine input(bitset, unit, io_type, v_list, io_status, io_message)
+        use :: stdlib_ascii, only:to_upper
+
+        class(operable_bitset), intent(inout) :: bitset
+            !! passed-object dummy argument
+        integer(int32), intent(in) :: unit
+            !! unit number
+        character(*), intent(in) :: io_type
+            !! type name specified by the format descriptor for UDIO
+        integer(int32), intent(in) :: v_list(:)
+            !! variable list specified by the format descriptor for UDIO
+        integer(int32), intent(out) :: io_status
+            !! IO status returned from read statement
+        character(*), intent(inout) :: io_message
+            !! IO message returned from read statement
+
+        error_case: block
+            !- fmt /= '(DT"bitset")'
+            if (all([io_type /= "LISTDIRECTED", &
+                     io_type /= "DT", &
+                     to_upper(io_type) /= "DTBITSET"])) then
+                io_status = format_descriptor_mismatch
+                io_message = get_error_message(io_status)
+                return
+            end if
+        end block error_case
+
+        normal_case: block
+            character(:), allocatable :: buffer, iomsg
+            integer(int32) :: len_bits, status
+
+            ! getline@stdlib_io is not available
+            ! because `open` statement is forbidden
+            call getline(buffer, io_status, io_message)
+
+            !--- formatted read
+            if (size(v_list) >= 1) then
+                len_bits = len(buffer)
+
+                if (v_list(1) > len_bits) then
+                    ! padding the upper bits with 0
+                    ! read(*, DT"bitset"(10)) 11110000 -> 0011110000
+                    buffer = repeat("0", v_list(1) - len_bits)//buffer
+                else if (v_list(1) < len_bits) then
+                    ! truncate upper bits
+                    ! write(*, DT"bitset"(6)) 11000000 -> 000000
+                    buffer = buffer(len_bits - v_list(1) + 1:)
+                end if
+            end if
+
+            call bitset%init(buffer, status)
+            if (status /= 0) then
+                io_status = status
+                io_message = get_error_message(io_status)
+            end if
+        end block normal_case
+    contains
+        ! Read a whole line from a unit
+        subroutine getline(line, iostat, iomsg)
+            character(:), allocatable, intent(out) :: line ! line to read
+            integer(int32), intent(out) :: iostat ! status of IO operation
+            character(*), intent(out) :: iomsg ! error message corresponding to the IO status
+
+            character(128) :: buf, msg
+            integer(int32) :: stat, chunk
+
+            stat = 0
+            line = ""
+            do while (stat == 0)
+                read (unit, '(A)', advance='no', iostat=stat, iomsg=msg, size=chunk) buf
+                if (stat /= 0 .and. (.not. is_iostat_eor(stat))) exit
+                if (chunk > 0) line = line//buf(:chunk)
+            end do
+            if (is_iostat_eor(stat)) then
+                stat = 0
+                msg = ""
+            end if
+
+            if (stat /= 0) iomsg = trim(msg)
+            iostat = stat
+        end subroutine getline
+    end subroutine input
+#endif
 
     !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical AND of the bits in `lhs` and `rhs`.
