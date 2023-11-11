@@ -30,6 +30,7 @@ module orbs_type_operableBitset
     implicit none
     private
     public :: assignment(=)
+    public :: operator(//)
     public :: operator( .and. )
     public :: operator(.andnot.)
     public :: operator( .or. )
@@ -128,6 +129,11 @@ module orbs_type_operableBitset
     !>Assignment of a string as the bitset.
     interface assignment(=)
         procedure :: assign_string
+    end interface
+
+    !>Catenation of two bitsets
+    interface operator(//)
+        procedure :: catenate
     end interface
 
     !>Bitwise logical AND of the bits of two bitsets.
@@ -596,6 +602,82 @@ contains
 
         call lhs%init(rhs)
     end subroutine assign_string
+
+    !>Catenate two bitsets and returns new `operable_bitset` instance.
+    !>
+    !>This procedure intented to be overloaded as the `//` operator.
+    function catenate(lhs, rhs) result(new_bitset)
+        type(operable_bitset), intent(in) :: lhs
+            !! A bitset at the left side of the // operator
+        type(operable_bitset), intent(in) :: rhs
+            !! A bitset at the left side of the // operator
+        type(operable_bitset) :: new_bitset
+            !! new bitset with a catenated value of two bitsets
+
+        integer(int32) :: bits, lhs_bits, rhs_bits
+
+        lhs_bits = lhs%bits()
+        rhs_bits = rhs%bits()
+        bits = lhs_bits + rhs_bits
+        call new_bitset%init(bits)
+
+        call copy_range(rhs, new_bitset, 0, rhs_bits - 1, 0)
+        call copy_range(lhs, new_bitset, 0, lhs_bits - 1, rhs_bits)
+        ! do bit = 0, rhs_bits - 1
+        !     if (rhs%test(bit)) then
+        !         call new_bitset%set(bit)
+        !     else
+        !         call new_bitset%clear(bit)
+        !     end if
+        ! end do
+        ! do bit = 0, lhs_bits - 1
+        !     if (lhs%test(bit)) then
+        !         call new_bitset%set(bit + rhs_bits)
+        !     else
+        !         call new_bitset%clear(bit + rhs_bits)
+        !     end if
+        ! end do
+    end function catenate
+
+    !>Copys a value of a bit at `from_pos` in `from` to
+    !>`to` at `to_pos`.
+    subroutine copy_pos(from, to, from_pos, to_pos)
+        type(operable_bitset), intent(in) :: from
+            !! source bitset
+        type(operable_bitset), intent(inout) :: to
+            !! destination bitset
+        integer(int32), intent(in) :: from_pos
+            !! position of the bit of the source bitset
+        integer(int32), intent(in) :: to_pos
+            !! position of the bit of the destination bitset
+
+        if (from%test(from_pos)) then
+            call to%set(to_pos)
+        else
+            call to%clear(to_pos)
+        end if
+    end subroutine copy_pos
+
+    !>Copys a sequence of bits in range `from_start_pos` to `from_end pos`
+    !>in `from` to the range starting from `to_start_pos` in `to`.
+    subroutine copy_range(from, to, from_start_pos, from_end_pos, to_start_pos)
+        type(operable_bitset), intent(in) :: from
+            !! source bitset
+        type(operable_bitset), intent(inout) :: to
+            !! destination bitset
+        integer(int32), intent(in) :: from_start_pos
+            !! starting position of the range in the source bitset
+        integer(int32), intent(in) :: from_end_pos
+            !! end position of the range in the source bitset
+        integer(int32), intent(in) :: to_start_pos
+            !! starting position of the range  in the destination bitset
+
+        integer(int32) :: inc
+
+        do inc = 0, from_end_pos - from_start_pos
+            call copy_pos(from, to, from_start_pos + inc, to_start_pos + inc)
+        end do
+    end subroutine copy_range
 
     !>Returns new `operable_bitset` instance having the bits
     !>set to the bitwise logical AND of the bits in `lhs` and `rhs`.

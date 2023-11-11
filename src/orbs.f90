@@ -28,6 +28,7 @@ module orbs
 
     ! opereators
     public :: assignment(=)
+    public :: operator(//)
     public :: operator( .and. )
     public :: operator(.andnot.)
     public :: operator( .or. )
