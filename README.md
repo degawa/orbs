@@ -36,6 +36,8 @@ The `orbs` provides  a user-defined derived type for handling bitsets, procedure
 - arithmetic operators
     - `+`
     - `-`
+- catenation operator
+    - `//`
 
 ### Examples
 
