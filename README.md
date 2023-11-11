@@ -18,7 +18,7 @@ The `orbs` provides  a user-defined derived type for handling bitsets, procedure
     - error status codes and `get_error_message` for getting corresponding error message
 
 ### Operators for `operable_bitset` type
-- logical operations
+- logical operators
     - `.and.`
     - `.andnot.`
     - `.or.`
@@ -31,9 +31,9 @@ The `orbs` provides  a user-defined derived type for handling bitsets, procedure
     - `<=`
     - `>`
     - `>=`
-- bit operaitons
-    - `shift`
-- arithmetic operations
+- bit operators
+    - `.shift.`
+- arithmetic operators
     - `+`
     - `-`
 
