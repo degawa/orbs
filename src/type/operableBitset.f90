@@ -246,7 +246,9 @@ contains
     !>Deep copys the bitset `from` to `to`.
     pure elemental subroutine clone(from, to)
         type(operable_bitset), intent(in) :: from
+            !! source bitset
         type(operable_bitset), intent(out) :: to
+            !! destination bitset
 
         to = from
     end subroutine clone
@@ -753,7 +755,7 @@ contains
         type(operable_bitset), intent(in) :: this
             !! A bitset at the right side of the NOT operator
         type(operable_bitset) :: new_bitset
-            !! new bitset having bits set tothe bitwise logical complement
+            !! new bitset having bits set to the bitwise logical complement
 
         call clone(from=this, to=new_bitset)
         call new_bitset%bitset%not()
