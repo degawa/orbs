@@ -5,6 +5,7 @@ module test_operator_collection
     use :: test_operator_unitTests_arithmetic
     use :: test_operator_unitTests_bit
     use :: test_operator_unitTests_assignment
+    use :: test_operator_unitTests_catenate
     implicit none
     private
     public :: collect_operator
@@ -58,6 +59,8 @@ contains
                                     shift_op_returns_bitset_having_value_of_result_of_shifting) &
                      , new_unittest("bitset assignment = string", &
                                     assign_string_assigns_rhs_string_as_bitset) &
+                     , new_unittest("bitset catenation operator //", &
+                                    cat_op_catenate_two_bitsets) &
                      ]
     end subroutine collect_operator
 end module test_operator_collection
